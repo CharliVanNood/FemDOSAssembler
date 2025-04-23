@@ -1,4 +1,6 @@
 operators = {
+    "global": "001",
+
     "mov": "016",
     "org": False,
     "int": "017",
@@ -45,6 +47,10 @@ registers = {
     "FS": "20", 
     "GS": "21",
 }
+
+start_functions = [
+    "_start", "start"
+]
 
 def getFileData(file):
     file_data = ""
@@ -132,12 +138,14 @@ def parse(data):
                         addresses[key] = len(addresses) + 300
                     
                     functions[len(functions) - 1]["bytes"] += str(addresses[key])
+                elif key in start_functions:
+                    functions[len(functions) - 1]["bytes"] += "000"
                 else:
                     print(f"'{key}' is not supported and will be ignored")
 
     start_found = None
     for label in labels:
-        if label == "start" or label == "_start":
+        if label in start_functions:
             start_found = labels[label]
     if start_found == None:
         print("No start found, defaulting to 000")
