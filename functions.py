@@ -5,7 +5,11 @@ operators = {
     "ret": "018",
     "loop": "019",
     "add": "020",
-    "xor": "021"
+    "xor": "021",
+    
+    "stosb": "032",
+    "stosw": "033",
+    "stosd": "034",
 }
 
 registers = {
