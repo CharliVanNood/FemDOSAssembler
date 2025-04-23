@@ -63,14 +63,42 @@ def parse(data):
     functions = []
     labels = {}
     addresses = {}
+    strings = []
+    string_index = 0
+
+    for line in data.split("\n"):
+        is_string = False
+        for character in line:
+            if character == "'":
+                is_string = not is_string
+                if is_string:
+                    strings.append("")
+                continue
+
+            if is_string:
+                strings[len(strings) - 1] += character
 
     for line in data.split("\n"):
         is_comment = False
         is_section = False
+        is_string = False
+
         for key in line.replace(",", "").split(" "):
             if ";" in key: is_comment = True
             if not is_comment:
                 if key == '': continue
+                if "'" in key:
+                    is_string = not is_string
+
+                    if is_string:
+                        if strings[string_index] not in addresses:
+                            addresses[strings[string_index]] = len(addresses) + 300
+                        
+                        functions[len(functions) - 1]["bytes"] += str(addresses[strings[string_index]])
+
+                        string_index += 1
+                    continue
+                if is_string: continue
                 if key == "section":
                     is_section = True
                     continue
