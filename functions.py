@@ -6,10 +6,19 @@ operators = {
     "loop": "019",
     "add": "020",
     "xor": "021",
+    "len": "022",
+    "equ": "023",
+    "$": "024",
+
+    "+": "025",
+    "-": "026",
     
     "stosb": "032",
     "stosw": "033",
     "stosd": "034",
+    "msg": "035",
+
+    "db": "064",
 }
 
 registers = {
@@ -29,7 +38,12 @@ registers = {
     "R13": "13", "R13D": "13", "R13W": "13", "R13B": "13",
     "R14": "14", "R14D": "14", "R14W": "14", "R14B": "14",
     "R15": "15", "R15D": "15", "R15W": "15", "R15B": "15",
-    "CS": "16", "DS": "17", "ES": "18", "SS": "19", "FS": "20", "GS": "21",
+    "CS": "16", 
+    "DS": "17", 
+    "ES": "18", 
+    "SS": "19", 
+    "FS": "20", 
+    "GS": "21",
 }
 
 def getFileData(file):
@@ -52,10 +66,18 @@ def parse(data):
 
     for line in data.split("\n"):
         is_comment = False
+        is_section = False
         for key in line.replace(",", "").split(" "):
             if ";" in key: is_comment = True
             if not is_comment:
                 if key == '': continue
+                if key == "section":
+                    is_section = True
+                    continue
+                if is_section:
+                    functions.append({"function": len(functions), "bytes": ""})
+                    is_section = False
+                    continue
                 if key in operators:
                     function = operators[key]
                     if not function:
